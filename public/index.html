@@ -8,19 +8,27 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════
-     APP SHELL
-═══════════════════════════════════════════════ -->
 <div id="app">
 
-  <!-- ── Sidebar ── -->
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
   <aside id="sidebar">
     <div id="sidebar-header">
+
+      <!-- Brand — hover reveals edit pencil -->
       <div id="brand">
-        <span class="brand-icon">📘</span>
-        <div>
-          <h1>CA Final</h1>
-          <p>Study Tracker</p>
+        <div id="brand-logo-wrap">
+          <img id="brand-logo" src="logo.png" alt="Logo"
+               onerror="this.style.display='none'; document.getElementById('brand-logo-fallback').style.display='inline';" />
+          <span id="brand-logo-fallback" class="brand-icon">📘</span>
+        </div>
+        <div id="brand-text-wrap">
+          <div id="brand-name-row">
+            <h1 id="brand-title">CA Final</h1>
+            <button type="button" id="btn-edit-brand" class="brand-edit-btn" title="Edit name">✏️</button>
+          </div>
+          <p id="brand-subtitle">Study Tracker</p>
         </div>
       </div>
 
@@ -33,15 +41,28 @@
         <div class="progress-bar-track">
           <div class="progress-bar-fill" id="overall-bar"></div>
         </div>
+        <div id="pace-indicator" class="hidden"></div>
       </div>
+
+      <!-- Target Date -->
+      <div id="target-date-box">
+        <div class="target-date-header">
+          <span class="target-label">🎯 Target Date</span>
+          <button type="button" class="link-btn" id="btn-edit-dates">Edit</button>
+        </div>
+        <div id="target-date-display">
+          <div id="target-date-value">—</div>
+          <div id="days-remaining-row" class="hidden">
+            <span id="days-remaining-text"></span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Subject List -->
-    <nav id="subject-list">
-      <!-- Dynamically populated -->
-    </nav>
+    <!-- Navigation -->
+    <nav id="subject-list"></nav>
 
-    <!-- Add Subject -->
     <div id="add-subject-area">
       <button id="btn-add-subject" class="btn btn-primary btn-full">
         + Add Subject
@@ -49,22 +70,82 @@
     </div>
   </aside>
 
-  <!-- ── Main Panel ── -->
+  <!-- ══════════════════════════════════════════
+       MAIN PANEL
+  ══════════════════════════════════════════ -->
   <main id="main-panel">
 
-    <!-- Welcome screen (no subject selected) -->
-    <div id="welcome-screen">
-      <div class="welcome-content">
-        <div class="welcome-icon">🎯</div>
-        <h2>Welcome to CA Final Tracker</h2>
-        <p>Select a subject from the sidebar or add a new one to begin tracking your preparation.</p>
+    <!-- ── Dashboard View ── -->
+    <div id="dashboard-view" class="hidden">
+
+      <div id="dashboard-header">
+        <h2 id="dashboard-heading">Dashboard</h2>
+        <p class="dashboard-sub">Your CA Final preparation at a glance</p>
       </div>
+
+      <!-- Stats Row -->
+      <div id="dashboard-stats-row">
+        <div class="stat-card">
+          <div class="stat-value" id="dash-overall-pct">0%</div>
+          <div class="stat-label">Overall Progress</div>
+          <div class="progress-bar-track" style="margin-top:10px">
+            <div class="progress-bar-fill" id="dash-overall-bar"></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="dash-subjects-count">0</div>
+          <div class="stat-label">Subjects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="dash-chapters-total">0</div>
+          <div class="stat-label">Total Chapters</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value green" id="dash-chapters-done">0</div>
+          <div class="stat-label">Completed Chapters</div>
+        </div>
+      </div>
+
+      <!-- Date & Pace Row -->
+      <div id="dashboard-date-row" class="hidden">
+        <div class="date-stat-card">
+          <div class="date-stat-label">Start Date</div>
+          <div class="date-stat-value" id="dash-start-date">—</div>
+        </div>
+        <div class="date-stat-card">
+          <div class="date-stat-label">Target Date</div>
+          <div class="date-stat-value" id="dash-target-date">—</div>
+        </div>
+        <div class="date-stat-card">
+          <div class="date-stat-label">Days Remaining</div>
+          <div class="date-stat-value" id="dash-days-remaining">—</div>
+        </div>
+        <div class="date-stat-card">
+          <div class="date-stat-label">Pace</div>
+          <div id="dash-pace-badge" class="dash-pace-badge">—</div>
+        </div>
+      </div>
+
+      <!-- Subject Cards -->
+      <div id="dashboard-subjects-section">
+        <h3 class="dashboard-section-title">Subjects</h3>
+        <div id="dashboard-subject-cards"></div>
+      </div>
+
+      <!-- Needs Attention -->
+      <div id="dashboard-attention-section">
+        <h3 class="dashboard-section-title">
+          Needs Attention
+          <span class="section-subtitle">Chapters not yet started</span>
+        </h3>
+        <div id="dashboard-attention-list"></div>
+      </div>
+
     </div>
 
-    <!-- Subject Detail View (hidden by default) -->
+    <!-- ── Subject Detail View ── -->
     <div id="subject-view" class="hidden">
 
-      <!-- Subject Header -->
       <div id="subject-header">
         <div id="subject-title-row">
           <div>
@@ -76,8 +157,6 @@
             <button class="btn btn-danger-ghost" id="btn-delete-subject">🗑️ Delete</button>
           </div>
         </div>
-
-        <!-- Subject Progress -->
         <div class="subject-progress-box">
           <div class="progress-label-row">
             <span>Subject Completion</span>
@@ -89,15 +168,11 @@
         </div>
       </div>
 
-      <!-- Chapters Table -->
       <div id="chapters-container">
-
         <div id="chapters-toolbar">
           <h3>Chapters</h3>
           <button class="btn btn-primary" id="btn-add-chapter">+ Add Chapter</button>
         </div>
-
-        <!-- Legend -->
         <div id="table-legend">
           <span class="legend-item"><span class="dot green"></span>Concepts</span>
           <span class="legend-item"><span class="dot blue"></span>Illustrations</span>
@@ -106,8 +181,8 @@
           <span class="legend-item"><span class="dot teal"></span>MTP</span>
           <span class="legend-item"><span class="dot red"></span>PYQ</span>
           <span class="legend-item"><span class="dot gold"></span>Revision</span>
+          <span class="legend-item"><span class="dot" style="background:#22c55e"></span>Complete</span>
         </div>
-
         <div id="chapters-table-wrap">
           <table id="chapters-table">
             <thead>
@@ -119,31 +194,25 @@
                 <th class="col-bool" title="Revision Test Paper">RTP</th>
                 <th class="col-bool" title="Mock Test Paper">MTP</th>
                 <th class="col-bool" title="Previous Year Questions">PYQ</th>
-                <th class="col-rev" title="Revision Count">REV</th>
+                <th class="col-rev"  title="Revision Count">REV</th>
                 <th class="col-progress">Progress</th>
                 <th class="col-actions">Actions</th>
               </tr>
             </thead>
-            <tbody id="chapters-tbody">
-              <!-- Dynamically populated -->
-            </tbody>
+            <tbody id="chapters-tbody"></tbody>
           </table>
         </div>
-
         <div id="no-chapters" class="hidden">
           <p>No chapters yet. Click <strong>+ Add Chapter</strong> to get started.</p>
         </div>
-
       </div>
     </div>
+
   </main>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     MODALS
-═══════════════════════════════════════════════ -->
+<!-- MODALS -->
 
-<!-- Generic Input Modal -->
 <div id="modal-overlay" class="hidden">
   <div id="modal-box">
     <h3 id="modal-title">Modal Title</h3>
@@ -155,7 +224,24 @@
   </div>
 </div>
 
-<!-- Confirm Modal -->
+<div id="date-modal-overlay" class="hidden">
+  <div id="date-modal-box">
+    <h3>Set Study Dates</h3>
+    <div class="date-field">
+      <label for="input-start-date">Start Date</label>
+      <input type="date" id="input-start-date" />
+    </div>
+    <div class="date-field">
+      <label for="input-target-date">Target Completion Date</label>
+      <input type="date" id="input-target-date" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="date-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="date-modal-confirm">Save Dates</button>
+    </div>
+  </div>
+</div>
+
 <div id="confirm-overlay" class="hidden">
   <div id="confirm-box">
     <h3 id="confirm-title">Are you sure?</h3>
@@ -167,9 +253,7 @@
   </div>
 </div>
 
-<!-- Toast Notification -->
 <div id="toast"></div>
-
 <script src="script.js"></script>
 </body>
 </html>
