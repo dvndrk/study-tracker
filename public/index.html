@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CA Final Study Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- ── Sidebar ── -->
+  <aside id="sidebar">
+    <div id="sidebar-header">
+      <div id="brand">
+        <span class="brand-icon">📘</span>
+        <div>
+          <h1>CA Final</h1>
+          <p>Study Tracker</p>
+        </div>
+      </div>
+
+      <!-- Overall Progress -->
+      <div class="overall-progress-box">
+        <div class="progress-label-row">
+          <span>Overall Progress</span>
+          <span id="overall-pct">0%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="overall-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject List -->
+    <nav id="subject-list">
+      <!-- Dynamically populated -->
+    </nav>
+
+    <!-- Add Subject -->
+    <div id="add-subject-area">
+      <button id="btn-add-subject" class="btn btn-primary btn-full">
+        + Add Subject
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main Panel ── -->
+  <main id="main-panel">
+
+    <!-- Welcome screen (no subject selected) -->
+    <div id="welcome-screen">
+      <div class="welcome-content">
+        <div class="welcome-icon">🎯</div>
+        <h2>Welcome to CA Final Tracker</h2>
+        <p>Select a subject from the sidebar or add a new one to begin tracking your preparation.</p>
+      </div>
+    </div>
+
+    <!-- Subject Detail View (hidden by default) -->
+    <div id="subject-view" class="hidden">
+
+      <!-- Subject Header -->
+      <div id="subject-header">
+        <div id="subject-title-row">
+          <div>
+            <h2 id="subject-title">Subject Name</h2>
+            <span id="subject-chapter-count">0 chapters</span>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-ghost" id="btn-edit-subject">✏️ Edit</button>
+            <button class="btn btn-danger-ghost" id="btn-delete-subject">🗑️ Delete</button>
+          </div>
+        </div>
+
+        <!-- Subject Progress -->
+        <div class="subject-progress-box">
+          <div class="progress-label-row">
+            <span>Subject Completion</span>
+            <span id="subject-pct">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill accent" id="subject-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapters Table -->
+      <div id="chapters-container">
+
+        <div id="chapters-toolbar">
+          <h3>Chapters</h3>
+          <button class="btn btn-primary" id="btn-add-chapter">+ Add Chapter</button>
+        </div>
+
+        <!-- Legend -->
+        <div id="table-legend">
+          <span class="legend-item"><span class="dot green"></span>Concepts</span>
+          <span class="legend-item"><span class="dot blue"></span>Illustrations</span>
+          <span class="legend-item"><span class="dot purple"></span>TYK</span>
+          <span class="legend-item"><span class="dot orange"></span>RTP</span>
+          <span class="legend-item"><span class="dot teal"></span>MTP</span>
+          <span class="legend-item"><span class="dot red"></span>PYQ</span>
+          <span class="legend-item"><span class="dot gold"></span>Revision</span>
+        </div>
+
+        <div id="chapters-table-wrap">
+          <table id="chapters-table">
+            <thead>
+              <tr>
+                <th class="col-name">Chapter</th>
+                <th class="col-bool" title="Concepts">CON</th>
+                <th class="col-bool" title="Illustrations">ILL</th>
+                <th class="col-bool" title="Test Your Knowledge">TYK</th>
+                <th class="col-bool" title="Revision Test Paper">RTP</th>
+                <th class="col-bool" title="Mock Test Paper">MTP</th>
+                <th class="col-bool" title="Previous Year Questions">PYQ</th>
+                <th class="col-rev" title="Revision Count">REV</th>
+                <th class="col-progress">Progress</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="chapters-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="no-chapters" class="hidden">
+          <p>No chapters yet. Click <strong>+ Add Chapter</strong> to get started.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════════ -->
+
+<!-- Generic Input Modal -->
+<div id="modal-overlay" class="hidden">
+  <div id="modal-box">
+    <h3 id="modal-title">Modal Title</h3>
+    <input type="text" id="modal-input" placeholder="Enter name..." maxlength="120" />
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="modal-confirm">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div id="confirm-overlay" class="hidden">
+  <div id="confirm-box">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p id="confirm-message">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="confirm-cancel">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

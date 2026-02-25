@@ -1,0 +1,13 @@
+{
+  "name": "ca-final-study-tracker",
+  "version": "1.0.0",
+  "description": "CA Final 14-month Study Tracker — local, offline, JSON-backed",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
+  }
+}
