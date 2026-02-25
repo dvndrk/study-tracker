@@ -6,12 +6,6 @@ A clean, offline-first study tracker web application built with Node.js and Vani
 
 ---
 
-## Screenshots
-
-> Dashboard view with subject cards, progress tracking, and pace indicator.
-
----
-
 ## Features
 
 **Tracking**
