@@ -86,3 +86,5 @@ Move the entire folder to any system with Node.js:
 npm install && node server.js
 ```
 All data is in `/data/subjects.json` — fully portable.
+
+Data folder and Subjects.json file will be created automatically on first install of dependencies.
