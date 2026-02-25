@@ -2,7 +2,7 @@
 
 A clean, offline-first study tracker web application built with Node.js and Vanilla JavaScript. Track subjects, chapters, and multiple completion criteria — all stored locally in a JSON file with no database required.
 
-![Study Tracker Dashboard](https://img.shields.io/badge/version-3.0-blue) ![Node.js](https://img.shields.io/badge/node-%3E%3D14.0-green) ![License](https://img.shields.io/badge/license-MIT-lightgrey)
+![Study Tracker Dashboard](https://img.shields.io/badge/version-2.0-blue) ![Node.js](https://img.shields.io/badge/node-%3E%3D14.0-green) ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 ---
 
