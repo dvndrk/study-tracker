@@ -199,5 +199,5 @@ app.delete('/subjects/:subjectId/chapters/:chapterId', (req, res) => {
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`\n✅ CA Final Study Tracker v2 running at http://localhost:${PORT}\n`);
+  console.log(`\n✅ dvndrk Study Tracker running at http://localhost:${PORT}\n`);
 });

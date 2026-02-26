@@ -206,13 +206,17 @@ function showDateModal(current) {
 
 /** Render brand title and subtitle from config (with fallback defaults) */
 function renderBrand() {
-  $('brand-title').textContent    = State.config.brandTitle    || 'CA Final';
-  $('brand-subtitle').textContent = State.config.brandSubtitle || 'Study Tracker';
+  const title    = State.config.brandTitle    || 'dvndrk';
+  const subtitle = State.config.brandSubtitle || 'Study Tracker';
+  $('brand-title').textContent    = title;
+  $('brand-subtitle').textContent = subtitle;
+  // Keep browser tab in sync with brand name
+  document.title = `${title} ${subtitle}`;
 }
 
 /** Hover-reveal edit button handler — edits title and subtitle */
 async function handleEditBrand() {
-  const currentTitle    = State.config.brandTitle    || 'CA Final';
+  const currentTitle    = State.config.brandTitle    || 'dvndrk';
   const currentSubtitle = State.config.brandSubtitle || 'Study Tracker';
 
   // First modal: app title
@@ -348,7 +352,7 @@ function renderDashboard() {
   const overall  = calcOverallPct(subjects);
 
   // ── Fix 2: Dashboard subtitle reflects brand name ──
-  const brandTitle = State.config.brandTitle || 'CA Final';
+  const brandTitle = State.config.brandTitle || 'dvndrk';
   $('dashboard-heading').textContent = 'Dashboard';
   document.querySelector('.dashboard-sub').textContent = `${brandTitle} — preparation at a glance`;
 
