@@ -10,13 +10,11 @@
 
 <div id="app">
 
-  <!-- ══════════════════════════════════════════
-       SIDEBAR
-  ══════════════════════════════════════════ -->
+  <!-- ══ SIDEBAR ══ -->
   <aside id="sidebar">
     <div id="sidebar-header">
 
-      <!-- Brand — hover reveals edit pencil -->
+      <!-- Brand — hover reveals the edit pencil -->
       <div id="brand">
         <div id="brand-logo-wrap">
           <img id="brand-logo" src="logo.png" alt="Logo"
@@ -25,14 +23,14 @@
         </div>
         <div id="brand-text-wrap">
           <div id="brand-name-row">
-            <h1 id="brand-title">CA Final</h1>
-            <button type="button" id="btn-edit-brand" class="brand-edit-btn" title="Edit name">✏️</button>
+            <h1 id="brand-title">dvndrk</h1>
+            <button type="button" id="btn-edit-brand" class="brand-edit-btn" title="Edit name" aria-label="Edit app name">✏️</button>
           </div>
           <p id="brand-subtitle">Study Tracker</p>
         </div>
       </div>
 
-      <!-- Overall Progress -->
+      <!-- Overall progress -->
       <div class="overall-progress-box">
         <div class="progress-label-row">
           <span>Overall Progress</span>
@@ -44,51 +42,42 @@
         <div id="pace-indicator" class="hidden"></div>
       </div>
 
-      <!-- Target Date -->
+      <!-- Target date -->
       <div id="target-date-box">
         <div class="target-date-header">
           <span class="target-label">🎯 Target Date</span>
           <button type="button" class="link-btn" id="btn-edit-dates">Edit</button>
         </div>
-        <div id="target-date-display">
-          <div id="target-date-value">—</div>
-          <div id="days-remaining-row" class="hidden">
-            <span id="days-remaining-text"></span>
-          </div>
+        <div id="target-date-value">—</div>
+        <div id="days-remaining-row" class="hidden">
+          <span id="days-remaining-text"></span>
         </div>
       </div>
 
     </div>
 
-    <!-- Navigation -->
     <nav id="subject-list"></nav>
 
     <div id="add-subject-area">
-      <button id="btn-add-subject" class="btn btn-primary btn-full">
-        + Add Subject
-      </button>
+      <button type="button" id="btn-add-subject" class="btn btn-primary btn-full">+ Add Subject</button>
     </div>
   </aside>
 
-  <!-- ══════════════════════════════════════════
-       MAIN PANEL
-  ══════════════════════════════════════════ -->
+  <!-- ══ MAIN PANEL ══ -->
   <main id="main-panel">
 
-    <!-- ── Dashboard View ── -->
+    <!-- Dashboard -->
     <div id="dashboard-view" class="hidden">
-
       <div id="dashboard-header">
         <h2 id="dashboard-heading">Dashboard</h2>
-        <p class="dashboard-sub">Your CA Final preparation at a glance</p>
+        <p class="dashboard-sub">Your study progress at a glance</p>
       </div>
 
-      <!-- Stats Row -->
       <div id="dashboard-stats-row">
         <div class="stat-card">
           <div class="stat-value" id="dash-overall-pct">0%</div>
           <div class="stat-label">Overall Progress</div>
-          <div class="progress-bar-track" style="margin-top:10px">
+          <div class="progress-bar-track stat-bar">
             <div class="progress-bar-fill" id="dash-overall-bar"></div>
           </div>
         </div>
@@ -106,7 +95,6 @@
         </div>
       </div>
 
-      <!-- Date & Pace Row -->
       <div id="dashboard-date-row" class="hidden">
         <div class="date-stat-card">
           <div class="date-stat-label">Start Date</div>
@@ -126,35 +114,24 @@
         </div>
       </div>
 
-      <!-- Subject Cards -->
       <div id="dashboard-subjects-section">
         <h3 class="dashboard-section-title">Subjects</h3>
         <div id="dashboard-subject-cards"></div>
       </div>
-
-      <!-- Needs Attention -->
-      <div id="dashboard-attention-section">
-        <h3 class="dashboard-section-title">
-          Needs Attention
-          <span class="section-subtitle">Chapters not yet started</span>
-        </h3>
-        <div id="dashboard-attention-list"></div>
-      </div>
-
     </div>
 
-    <!-- ── Subject Detail View ── -->
+    <!-- Subject detail -->
     <div id="subject-view" class="hidden">
-
       <div id="subject-header">
         <div id="subject-title-row">
           <div>
-            <h2 id="subject-title">Subject Name</h2>
+            <h2 id="subject-title"></h2>
             <span id="subject-chapter-count">0 chapters</span>
           </div>
           <div class="header-actions">
-            <button class="btn btn-ghost" id="btn-edit-subject">✏️ Edit</button>
-            <button class="btn btn-danger-ghost" id="btn-delete-subject">🗑️ Delete</button>
+            <button type="button" class="btn btn-ghost" id="btn-manage-params">Manage Parameters</button>
+            <button type="button" class="btn btn-ghost" id="btn-edit-subject">✏️ Rename</button>
+            <button type="button" class="btn btn-danger-ghost" id="btn-delete-subject">🗑️ Delete</button>
           </div>
         </div>
         <div class="subject-progress-box">
@@ -171,34 +148,12 @@
       <div id="chapters-container">
         <div id="chapters-toolbar">
           <h3>Chapters</h3>
-          <button class="btn btn-primary" id="btn-add-chapter">+ Add Chapter</button>
+          <button type="button" class="btn btn-primary" id="btn-add-chapter">+ Add Chapter</button>
         </div>
-        <div id="table-legend">
-          <span class="legend-item"><span class="dot green"></span>Concepts</span>
-          <span class="legend-item"><span class="dot blue"></span>Illustrations</span>
-          <span class="legend-item"><span class="dot purple"></span>TYK</span>
-          <span class="legend-item"><span class="dot orange"></span>RTP</span>
-          <span class="legend-item"><span class="dot teal"></span>MTP</span>
-          <span class="legend-item"><span class="dot red"></span>PYQ</span>
-          <span class="legend-item"><span class="dot gold"></span>Revision</span>
-          <span class="legend-item"><span class="dot" style="background:#22c55e"></span>Complete</span>
-        </div>
+        <div id="table-legend"></div>
         <div id="chapters-table-wrap">
           <table id="chapters-table">
-            <thead>
-              <tr>
-                <th class="col-name">Chapter</th>
-                <th class="col-bool" title="Concepts">CON</th>
-                <th class="col-bool" title="Illustrations">ILL</th>
-                <th class="col-bool" title="Test Your Knowledge">TYK</th>
-                <th class="col-bool" title="Revision Test Paper">RTP</th>
-                <th class="col-bool" title="Mock Test Paper">MTP</th>
-                <th class="col-bool" title="Previous Year Questions">PYQ</th>
-                <th class="col-rev"  title="Revision Count">REV</th>
-                <th class="col-progress">Progress</th>
-                <th class="col-actions">Actions</th>
-              </tr>
-            </thead>
+            <thead><tr id="chapters-thead-row"></tr></thead>
             <tbody id="chapters-tbody"></tbody>
           </table>
         </div>
@@ -211,49 +166,98 @@
   </main>
 </div>
 
-<!-- MODALS -->
+<!-- ══ DIALOGS ══ -->
 
-<div id="modal-overlay" class="hidden">
-  <div id="modal-box">
-    <h3 id="modal-title">Modal Title</h3>
-    <input type="text" id="modal-input" placeholder="Enter name..." maxlength="120" />
+<div id="subject-create-overlay" class="overlay hidden">
+  <div class="parameter-modal-box" role="dialog" aria-modal="true" aria-labelledby="subject-create-title">
+    <h3 id="subject-create-title">Add Subject</h3>
+    <label class="field-label" for="new-subject-name">Subject name</label>
+    <input id="new-subject-name" type="text" maxlength="120" placeholder="Subject name" />
+    <div class="param-editor-heading">
+      <div><strong>Parameters</strong><p>Each parameter needs a full name and a short table label (max 12 characters).</p></div>
+      <button type="button" class="btn btn-ghost" id="btn-create-add-param">+ Add parameter</button>
+    </div>
+    <div id="create-param-rows" class="param-rows"></div>
+    <p class="form-hint">At least one parameter is required. Parameter order sets the table column order.</p>
     <div class="modal-actions">
-      <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
-      <button class="btn btn-primary" id="modal-confirm">Save</button>
+      <button type="button" class="btn btn-ghost" id="subject-create-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="subject-create-confirm">Create Subject</button>
     </div>
   </div>
 </div>
 
-<div id="date-modal-overlay" class="hidden">
-  <div id="date-modal-box">
-    <h3>Set Study Dates</h3>
-    <div class="date-field">
-      <label for="input-start-date">Start Date</label>
+<div id="params-overlay" class="overlay hidden">
+  <div class="parameter-modal-box" role="dialog" aria-modal="true" aria-labelledby="params-title">
+    <h3 id="params-title">Manage Parameters</h3>
+    <p class="params-subtitle">Changes apply to every chapter in this subject. Reordering changes the table column order.</p>
+    <div id="manage-param-rows" class="param-rows"></div>
+    <button type="button" class="btn btn-ghost" id="btn-manage-add-param">+ Add parameter</button>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="params-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="params-save">Save Parameters</button>
+    </div>
+  </div>
+</div>
+
+<div id="brand-overlay" class="overlay hidden">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="brand-modal-title">
+    <h3 id="brand-modal-title">Edit App Name</h3>
+    <div class="field">
+      <label class="field-label" for="brand-title-input">Name</label>
+      <input type="text" id="brand-title-input" maxlength="60" />
+    </div>
+    <div class="field">
+      <label class="field-label" for="brand-subtitle-input">Subtitle <span class="optional">(optional)</span></label>
+      <input type="text" id="brand-subtitle-input" maxlength="60" />
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="brand-modal-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="brand-modal-confirm">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-overlay" class="overlay hidden">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <h3 id="modal-title"></h3>
+    <input type="text" id="modal-input" maxlength="120" />
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="modal-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="modal-confirm">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="date-modal-overlay" class="overlay hidden">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="date-modal-title">
+    <h3 id="date-modal-title">Study Dates</h3>
+    <div class="field">
+      <label class="field-label" for="input-start-date">Start date</label>
       <input type="date" id="input-start-date" />
     </div>
-    <div class="date-field">
-      <label for="input-target-date">Target Completion Date</label>
+    <div class="field">
+      <label class="field-label" for="input-target-date">Target completion date</label>
       <input type="date" id="input-target-date" />
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" id="date-modal-cancel">Cancel</button>
-      <button class="btn btn-primary" id="date-modal-confirm">Save Dates</button>
+      <button type="button" class="btn btn-ghost" id="date-modal-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="date-modal-confirm">Save Dates</button>
     </div>
   </div>
 </div>
 
-<div id="confirm-overlay" class="hidden">
-  <div id="confirm-box">
-    <h3 id="confirm-title">Are you sure?</h3>
-    <p id="confirm-message">This action cannot be undone.</p>
+<div id="confirm-overlay" class="overlay hidden">
+  <div class="modal-box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+    <h3 id="confirm-title"></h3>
+    <p id="confirm-message"></p>
     <div class="modal-actions">
-      <button class="btn btn-ghost" id="confirm-cancel">Cancel</button>
-      <button class="btn btn-danger" id="confirm-ok">Delete</button>
+      <button type="button" class="btn btn-ghost" id="confirm-cancel">Cancel</button>
+      <button type="button" class="btn btn-danger" id="confirm-ok">Delete</button>
     </div>
   </div>
 </div>
 
-<div id="toast"></div>
-<script src="script.js"></script>
+<div id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>

@@ -1,14 +1,14 @@
 @echo off
 cd /d "%~dp0"
+title dvndrk Study Tracker
 
-echo Starting CA Final Study Tracker...
+echo Starting dvndrk Study Tracker...
+echo (Close this window to stop the app.)
 echo.
 
-REM Start server in this window
-start "" cmd /k "node server.js"
+REM The server opens the browser itself once it is ready.
+node server.js --open
 
-REM Wait 2 seconds to allow server to boot
-timeout /t 2 >nul
-
-REM Open browser
-start http://localhost:3000
+echo.
+echo The server stopped. Press any key to close.
+pause >nul
