@@ -10,7 +10,7 @@ Features-
 - Local JSON-based data storage
 - Runs locally on your computer
 
-Requirements - Node.js version required by the current project.
+Requirements - Node.js
 
 Installation-
 1. Clone the repository.
