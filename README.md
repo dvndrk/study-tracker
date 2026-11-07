@@ -1,220 +1,78 @@
-\# dvndrk Study Tracker
-
-
+# dvndrk Study Tracker
 
 A customizable, offline-first study tracker built with Node.js, Express, HTML, CSS, and vanilla JavaScript.
 
+## Features
 
+- **Dashboard & Pace Tracking**: Real-time overall progress bar, summary metrics, target date countdown, and dynamic pace calculation (Ahead, Behind, or On Track).
+- **Custom Subjects & Parameters**: Create and reorder subjects with 1 to 30 custom tracking parameters (e.g., Theory, Notes, Exercises, PYQs) with custom labels and column orders.
+- **Chapter Tracking & Revisions**: Chapter matrix with per-parameter checkboxes, color-coded progress bars, dedicated revision counter (`+`/`−`), and green row highlights for revised chapters.
+- **Search & Filters**: Instant chapter name search, filter pills (All, Pending, Complete, Revised), and `/` keyboard shortcut.
+- **Completed Chapters**: Collapsible dashboard overview of all completed chapters grouped by subject with revision status.
+- **Customizable UI**: Editable app name and subtitle, custom logo support (`logo.png`), and Dark/Light mode toggle with persistence.
+- **Offline & Safe Storage**: Local JSON storage with atomic file writes (`.tmp` swap), automatic startup backups (`subjects.bak.json`), and crash protection.
 
-\## Features
+---
 
+## Requirements
 
+- **Node.js**: `>= 24.0.0`
+- **Browser**: Any modern web browser
 
-\### Dashboard \& Overview
+---
 
-\- \*\*Progress Tracking\*\*: Real-time overall completion percentage and animated progress bar.
+## Installation
 
-\- \*\*Summary Metrics\*\*: Quick counters for overall progress, total subjects, total chapters, and completed chapters.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/dvndrk/study-tracker
+   cd study-tracker
+   ```
 
-\- \*\*Target Date \& Countdown\*\*: Set study start and target dates with an automatic days remaining or overdue counter.
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-\- \*\*Dynamic Pace Indicator\*\*: Evaluates actual progress against elapsed time to show if you are \*\*Ahead\*\*, \*\*Behind\*\*, or \*\*On Track\*\*.
+3. **Start the application**:
+   ```bash
+   npm start
+   ```
+   *On Windows, you can also double-click `start.bat` to launch and open the browser automatically.*
 
-\- \*\*Subject Cards\*\*: Overview cards showing chapter completion ratios (`done / total`) and color-coded progress indicators.
+4. **Open in browser**:
+   Navigate to [http://localhost:3000](http://localhost:3000).
 
-\- \*\*Completed Chapters View\*\*: Collapsible list of completed chapters grouped by subject, detailing revision status.
+---
 
-
-
-\### Subjects \& Custom Parameters
-
-\- \*\*Subject Management\*\*: Create, rename, delete, and reorder subjects directly from the sidebar.
-
-\- \*\*Custom Tracking Criteria\*\*: Configure 1 to 30 custom parameters per subject (e.g., Theory, Notes, Exercises, PYQs).
-
-\- \*\*Flexible Labels\*\*: Each parameter supports a full name (up to 80 characters) and a short table header label (up to 12 characters).
-
-\- \*\*In-Place Reordering\*\*: Reorder parameters anytime to dynamically restructure table columns.
-
-
-
-\### Chapter Tracking \& Revisions
-
-\- \*\*Chapter Matrix\*\*: Add, rename, delete, and reorder chapters within each subject.
-
-\- \*\*Checkbox Tracking\*\*: Toggle completion for individual parameters with instant recalculation of chapter and subject progress.
-
-\- \*\*Color-Coded Progress\*\*: Dynamic progress bars transitioning through Red (<25%), Orange (25–49%), Blue (50–79%), and Green (≥80%).
-
-\- \*\*Revision Counter\*\*: Dedicated counter with increment (`+`) and decrement (`−`) controls.
-
-\- \*\*Visual Status\*\*: Distinct green row tint for chapters revised at least once.
-
-\- \*\*Table Legend\*\*: Built-in legend mapping short column labels to parameter full names.
-
-
-
-\### Search \& Filtering
-
-\- \*\*Live Search\*\*: Instant chapter name filter within the active subject.
-
-\- \*\*Filter Pills\*\*: Switch views between \*\*All\*\*, \*\*Pending\*\*, \*\*Complete\*\*, and \*\*Revised\*\* chapters.
-
-\- \*\*Keyboard-Driven\*\*: Quickly focus search without reaching for the mouse.
-
-
-
-\### UI \& Customization
-
-\- \*\*Custom Branding\*\*: Rename the app title and subtitle directly from the UI.
-
-\- \*\*Logo Support\*\*: Displays `logo.png` from the `public/` directory with an emoji fallback (`📘`).
-
-\- \*\*Theme Modes\*\*: One-click toggle between Dark and Light themes with persistent preference (`localStorage` and system `prefers-color-scheme`).
-
-\- \*\*Zero-Build Frontend\*\*: Built with native browser ES modules; no bundler, compiler, or build step required.
-
-
-
-\### Storage \& Reliability
-
-\- \*\*Offline-First\*\*: All data is stored locally on your machine in JSON format.
-
-\- \*\*Atomic File Writes\*\*: Writes use temporary file swaps (`.tmp` → rename) to eliminate the risk of partial writes or corrupted files on sudden shutdown.
-
-\- \*\*Startup Backups\*\*: Automatically refreshes a safe backup copy (`subjects.bak.json`) on launch from verified valid data.
-
-\- \*\*Crash Protection\*\*: The server halts with an alert rather than overwriting existing files if a data file cannot be parsed.
-
-\- \*\*In-Memory Cache\*\*: Fast reads with memory caching.
-
-
-
-\---
-
-
-
-\## Requirements
-
-
-
-\- \*\*Node.js\*\*: `>= 24.0.0`
-
-\- \*\*Browser\*\*: Any modern web browser
-
-
-
-\---
-
-
-
-\## Installation
-
-
-
-1\. \*\*Clone the repository\*\*:
-
-&#x20;  ```bash
-
-&#x20;  git clone <https://github.com/dvndrk/study-tracker>
-
-&#x20;  cd study-tracker
-
-&#x20;  ```
-
-
-
-2\. \*\*Install dependencies\*\*:
-
-&#x20;  ```bash
-
-&#x20;  npm install
-
-&#x20;  ```
-
-
-
-3\. \*\*Start the application\*\*:
-
-&#x20;  ```bash
-
-&#x20;  npm start
-
-&#x20;  ```
-
-&#x20;  \*On Windows, you can also double-click `start.bat`.\*
-
-
-
-4\. \*\*Open in browser\*\*:
-
-&#x20;  Navigate to \[http://localhost:3000](http://localhost:3000) (opened automatically when using `start.bat` or the `--open` flag).
-
-
-
-\---
-
-
-
-\## Environment Variables
-
-
+## Environment Variables
 
 | Variable | Default | Description |
-
 |---|---|---|
-
 | `PORT` | `3000` | Port for the Express server to listen on. |
+| `DATA_DIR` | `./data` | Directory where data and backup JSON files are saved. |
 
-| `DATA\_DIR` | `./data` | Directory where data and backup JSON files are saved. |
+---
 
-
-
-\---
-
-
-
-\## Keyboard Shortcuts
-
-
+## Keyboard Shortcuts
 
 | Shortcut | Context | Action |
-
 |---|---|---|
-
 | `/` | Subject View | Focus and select chapter search input. |
+| `Esc` | Search Input | Clear search filter. |
 
-| `Esc` | Search Input | Clear search filter and restore full list. |
+---
 
-
-
-\---
-
-
-
-\## Data \& Privacy
-
-
+## Data & Privacy
 
 All study data is kept strictly local in the `data/` directory:
+- `data/subjects.json`: Active application data.
+- `data/subjects.bak.json`: Startup backup copy.
 
-\- `data/subjects.json`: Active application state and study records.
+The `data/` folder is excluded by `.gitignore` to keep personal study data off Git. The server binds strictly to `127.0.0.1`.
 
-\- `data/subjects.bak.json`: Startup backup copy.
+---
 
+## Development Status
 
-
-The `data/` folder is excluded by `.gitignore`. The server binds strictly to `127.0.0.1` by default to ensure only your local computer can access the app.
-
-
-
-\---
-
-
-
-\## Development Status
-
-
-
-hobby project to learn building so no status.
-
+Hobby project to learn building so no status.
