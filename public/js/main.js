@@ -11,18 +11,15 @@ import { $ } from './util.js';
 import { API } from './api.js';
 import { State } from './state.js';
 import { showToast } from './modals.js';
-import { renderBrand } from './render.js';
+import { renderBrand, applyChapterFilter } from './render.js';
 import * as A from './actions.js';
 
 function bindEvents() {
-  // Toolbar buttons
   $('btn-add-subject').addEventListener('click', A.handleAddSubject);
   $('btn-edit-subject').addEventListener('click', A.handleEditSubject);
   $('btn-delete-subject').addEventListener('click', A.handleDeleteSubject);
   $('btn-manage-params').addEventListener('click', A.handleManageParams);
   $('btn-add-chapter').addEventListener('click', A.handleAddChapter);
-
-  // Subject create / parameter manager dialogs
   $('subject-create-confirm').addEventListener('click', A.submitNewSubject);
   $('subject-create-cancel').addEventListener('click', A.cancelCreateSubject);
   $('btn-create-add-param').addEventListener('click', A.addParamToCreateForm);
@@ -32,7 +29,62 @@ function bindEvents() {
   A.attachParamEditor($('create-param-rows'));
   A.attachParamEditor($('manage-param-rows'));
 
-  // Sidebar: brand, dates, navigation, subject reordering
+  // Theme toggle
+  const themeBtn = $('btn-toggle-theme');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      const next = isDark ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('theme', next);
+    });
+  }
+
+  // Chapter search & filter
+  const searchInput = $('chapter-search');
+  const searchClear = $('chapter-search-clear');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => applyChapterFilter());
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        searchInput.value = '';
+        applyChapterFilter();
+      }
+    });
+  }
+  if (searchClear) {
+    searchClear.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+      }
+      applyChapterFilter();
+    });
+  }
+
+  const filterPills = $('chapter-filter-pills');
+  if (filterPills) {
+    filterPills.addEventListener('click', e => {
+      const pill = e.target.closest('.filter-pill');
+      if (!pill || pill.classList.contains('active')) return;
+      filterPills.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      applyChapterFilter();
+    });
+  }
+
+  // Press '/' anywhere outside inputs to quickly filter chapters
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName) && State.activeSubjectId !== null) {
+      const input = $('chapter-search');
+      if (input && !input.closest('.hidden')) {
+        e.preventDefault();
+        input.focus();
+        input.select();
+      }
+    }
+  });
+
   $('sidebar').addEventListener('click', e => {
     if (e.target.closest('#btn-edit-brand')) return A.handleEditBrand();
     if (e.target.closest('#btn-edit-dates')) return A.handleEditDates();
@@ -46,8 +98,6 @@ function bindEvents() {
     if (item) return A.selectSubject(item.dataset.subjectId);
     if (e.target.closest('[data-nav="dashboard"]')) A.selectDashboard();
   });
-
-  // Main panel: dashboard cards, checkboxes, revision / row buttons
   const panel = $('main-panel');
   panel.addEventListener('change', e => {
     const box = e.target;

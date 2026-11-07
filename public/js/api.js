@@ -10,7 +10,7 @@ async function request(method, path, body) {
   }
 
   let data = null;
-  try { data = await res.json(); } catch { /* non-JSON response */ }
+  try { data = await res.json(); } catch {}
   if (!res.ok) throw new Error(data?.error || `Server error (${res.status})`);
   return data;
 }

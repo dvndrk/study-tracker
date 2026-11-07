@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>dvndrk Study Tracker</title>
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    /* Apply saved theme before first paint to prevent flash */
+    const t = localStorage.getItem('theme');
+    if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches))
+      document.documentElement.dataset.theme = 'dark';
+  </script>
 </head>
 <body>
 
@@ -60,6 +66,10 @@
 
     <div id="add-subject-area">
       <button type="button" id="btn-add-subject" class="btn btn-primary btn-full">+ Add Subject</button>
+      <button type="button" id="btn-toggle-theme" class="theme-toggle-btn" title="Toggle theme" aria-label="Toggle theme">
+        <span class="theme-icon-light">🌙</span>
+        <span class="theme-icon-dark">☀️</span>
+      </button>
     </div>
   </aside>
 
@@ -118,6 +128,14 @@
         <h3 class="dashboard-section-title">Subjects</h3>
         <div id="dashboard-subject-cards"></div>
       </div>
+
+      <div id="completed-chapters-section">
+        <div class="completed-chapters-heading">
+          <h3 class="dashboard-section-title">Completed Chapters</h3>
+          <span id="completed-chapters-summary" class="completed-chapters-summary"></span>
+        </div>
+        <div id="completed-chapters-list"></div>
+      </div>
     </div>
 
     <!-- Subject detail -->
@@ -148,7 +166,20 @@
       <div id="chapters-container">
         <div id="chapters-toolbar">
           <h3>Chapters</h3>
-          <button type="button" class="btn btn-primary" id="btn-add-chapter">+ Add Chapter</button>
+          <div class="chapters-toolbar-right">
+            <div id="chapter-search-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="chapter-search" placeholder="Filter chapters…" aria-label="Filter chapters" />
+              <button type="button" id="chapter-search-clear" class="search-clear hidden" aria-label="Clear filter">×</button>
+            </div>
+            <div id="chapter-filter-pills">
+              <button type="button" class="filter-pill active" data-filter="all">All</button>
+              <button type="button" class="filter-pill" data-filter="pending">Pending</button>
+              <button type="button" class="filter-pill" data-filter="complete">Complete</button>
+              <button type="button" class="filter-pill" data-filter="revised">Revised</button>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-add-chapter">+ Add Chapter</button>
+          </div>
         </div>
         <div id="table-legend"></div>
         <div id="chapters-table-wrap">

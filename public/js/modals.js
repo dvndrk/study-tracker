@@ -1,8 +1,6 @@
 import { $ } from './util.js';
 import { parseLocalDate } from './calc.js';
 
-// ── Toast ──────────────────────────────────────────────────
-
 let toastTimer = null;
 
 /** duration 0 keeps the toast until the next one replaces it. */
@@ -14,8 +12,6 @@ export function showToast(message, type = 'success', duration = 3000) {
   if (duration > 0) toastTimer = setTimeout(() => { t.className = ''; }, duration);
 }
 
-// ── Overlay manager ────────────────────────────────────────
-// One place for: show/hide, focus in, focus back, Esc to close, Enter to submit, Tab kept inside.
 
 const stack = [];
 const FOCUSABLE = 'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -60,8 +56,6 @@ document.addEventListener('keydown', e => {
     else if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); }
   }
 });
-
-// ── Promise-based dialogs ──────────────────────────────────
 
 export function showInputModal(title, value = '', placeholder = 'Enter a name…') {
   return new Promise(resolve => {

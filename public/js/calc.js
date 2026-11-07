@@ -1,8 +1,5 @@
-// Pure functions — no DOM, no state. Easy to reason about and to test later.
-
 const DAY_MS = 86400000;
 
-/** Parse "YYYY-MM-DD" as a LOCAL date (new Date('YYYY-MM-DD') would be UTC and can be off by a day). */
 export function parseLocalDate(iso) {
   if (!iso) return null;
   const [y, m, d] = String(iso).split('-').map(Number);
@@ -16,7 +13,6 @@ function startOfToday() {
   return t;
 }
 
-/** A chapter's completion is decided by its parameters only. Revisions never affect it. */
 export function calcChapterPct(chapter, subject) {
   const params = subject?.params || [];
   if (!params.length) return 0;
@@ -29,7 +25,6 @@ export function isChapterComplete(chapter, subject) {
   return params.length > 0 && params.every(p => chapter.params?.[p.id] === true);
 }
 
-/** Revised at least once. Further revisions are only a counter. */
 export function isChapterRevised(chapter) {
   return chapter.revisionCount >= 1;
 }
@@ -41,12 +36,15 @@ export function calcSubjectPct(subject) {
 }
 
 export function calcOverallPct(subjects) {
-  if (!subjects.length) return 0;
-  const total = subjects.reduce((sum, s) => sum + calcSubjectPct(s), 0);
-  return Math.round(total / subjects.length);
+  const allChapters = subjects.flatMap(subject =>
+    subject.chapters.map(chapter => calcChapterPct(chapter, subject))
+  );
+  if (!allChapters.length) return 0;
+  const total = allChapters.reduce((sum, pct) => sum + pct, 0);
+  return Math.round(total / allChapters.length);
 }
 
-export function calcExpectedPct(startDate, targetDate) {
+function calcExpectedPct(startDate, targetDate) {
   const start = parseLocalDate(startDate);
   const target = parseLocalDate(targetDate);
   if (!start || !target) return null;
@@ -62,7 +60,6 @@ export function calcDaysRemaining(targetDate) {
   return Math.round((target - startOfToday()) / DAY_MS);
 }
 
-/** Describes pace as { kind: 'ahead' | 'behind' | 'ontrack', diff } or null if dates are not set. */
 export function calcPace(startDate, targetDate, actualPct) {
   const expected = calcExpectedPct(startDate, targetDate);
   if (expected === null) return null;

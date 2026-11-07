@@ -10,6 +10,4 @@ export function escapeHtml(str) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-export function newId() {
-  return crypto.randomUUID ? crypto.randomUUID() : `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
+export const newId = () => crypto.randomUUID();

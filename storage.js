@@ -8,7 +8,7 @@ import path from 'node:path';
  *  - One backup copy (subjects.bak.json) is refreshed at startup from a file known to be valid.
  */
 
-export function defaultConfig() {
+function defaultConfig() {
   return { startDate: '', targetDate: '', brandTitle: '', brandSubtitle: '' };
 }
 
@@ -16,6 +16,7 @@ export function createStore(dataDir) {
   const file = path.join(dataDir, 'subjects.json');
   const backup = path.join(dataDir, 'subjects.bak.json');
   const temp = path.join(dataDir, 'subjects.tmp.json');
+  let memoryCache = null;
 
   function normalise(parsed) {
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
@@ -36,6 +37,8 @@ export function createStore(dataDir) {
   }
 
   function read() {
+    if (memoryCache) return memoryCache;
+
     let text;
     try {
       text = fs.readFileSync(file, 'utf8');
@@ -43,7 +46,8 @@ export function createStore(dataDir) {
       throw new Error(`Cannot read data file: ${err.message}`);
     }
     try {
-      return normalise(JSON.parse(text));
+      memoryCache = normalise(JSON.parse(text));
+      return memoryCache;
     } catch (err) {
       throw new Error(
         `Data file is damaged (${err.message}). Nothing was changed. ` +
@@ -55,6 +59,7 @@ export function createStore(dataDir) {
   function write(data) {
     fs.writeFileSync(temp, JSON.stringify(data, null, 2), 'utf8');
     fs.renameSync(temp, file);
+    memoryCache = data;
   }
 
   /** Create the file if missing, verify it if present, refresh the backup. Throws if damaged. */
@@ -68,5 +73,5 @@ export function createStore(dataDir) {
     fs.copyFileSync(file, backup);
   }
 
-  return { read, write, init, file };
+  return { read, write, init };
 }

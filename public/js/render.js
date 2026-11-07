@@ -132,6 +132,7 @@ export function renderDashboard() {
   cards.innerHTML = '';
   if (!subjects.length) {
     cards.innerHTML = '<p class="empty-note">No subjects yet. Use <strong>+ Add Subject</strong> in the sidebar to start.</p>';
+    renderCompletedChapters(subjects);
     return;
   }
   subjects.forEach(subject => {
@@ -150,6 +151,73 @@ export function renderDashboard() {
         <div class="chapter-bar-fill" style="width:${pct}%; background:${pctColor(pct)}"></div>
       </div>`;
     cards.appendChild(card);
+  });
+
+  renderCompletedChapters(subjects);
+}
+
+function renderCompletedChapters(subjects) {
+  const list = $('completed-chapters-list');
+  const summary = $('completed-chapters-summary');
+  list.innerHTML = '';
+
+  const completed = subjects.flatMap(subject =>
+    subject.chapters
+      .filter(chapter => isChapterComplete(chapter, subject))
+      .map(chapter => ({ subject, chapter }))
+  );
+  const revised = completed.filter(({ chapter }) => isChapterRevised(chapter)).length;
+  const notRevised = completed.length - revised;
+
+  summary.textContent = completed.length
+    ? `${completed.length} completed · ${notRevised} not revised · ${revised} revised`
+    : 'No completed chapters yet.';
+
+  if (!completed.length) {
+    list.innerHTML = '<p class="empty-note">Completed chapters will appear here once all parameters for a chapter are finished.</p>';
+    return;
+  }
+
+  const grouped = new Map();
+  completed.forEach(item => {
+    if (!grouped.has(item.subject.id)) grouped.set(item.subject.id, { subject: item.subject, chapters: [] });
+    grouped.get(item.subject.id).chapters.push(item.chapter);
+  });
+
+  grouped.forEach(({ subject, chapters }) => {
+    const group = document.createElement('div');
+    group.className = 'completed-subject-group';
+
+    const header = document.createElement('div');
+    header.className = 'completed-group-header';
+    header.innerHTML = `
+      <span class="completed-subject-name">${escapeHtml(subject.name)}</span>
+      <span class="completed-group-count">${chapters.length}</span>
+      <span class="collapse-icon">▼</span>`;
+
+    const body = document.createElement('div');
+    body.className = 'completed-group-body';
+
+    header.addEventListener('click', () => {
+      header.classList.toggle('collapsed');
+      body.classList.toggle('collapsed');
+    });
+
+    chapters.forEach(chapter => {
+      const rev = isChapterRevised(chapter);
+      const row = document.createElement('div');
+      row.className = 'completed-chapter-row';
+      row.innerHTML = `
+        <span class="completed-chapter-name">${escapeHtml(chapter.name)}</span>
+        <span class="completed-chapter-revisions ${rev ? 'revised' : 'not-revised'}">
+          ${rev ? `Revised · ${chapter.revisionCount} ${chapter.revisionCount === 1 ? 'revision' : 'revisions'}` : 'Not revised'}
+        </span>`;
+      body.appendChild(row);
+    });
+
+    group.appendChild(header);
+    group.appendChild(body);
+    list.appendChild(group);
   });
 }
 
@@ -172,6 +240,7 @@ export function renderSubjectView() {
   setProgress($('subject-bar'), pct);
 
   renderChaptersTable(subject);
+  applyChapterFilter();
   return true;
 }
 
@@ -214,6 +283,8 @@ function renderChaptersTable(subject) {
   const empty = subject.chapters.length === 0;
   $('no-chapters').classList.toggle('hidden', !empty);
   $('chapters-table-wrap').classList.toggle('hidden', empty);
+  $('chapter-search-wrap')?.classList.toggle('hidden', empty);
+  $('chapter-filter-pills')?.classList.toggle('hidden', empty);
   if (empty) return;
 
   const last = subject.chapters.length - 1;
@@ -242,7 +313,7 @@ function buildChapterRow(subject, chapter, index, last) {
     <td class="col-name">${escapeHtml(chapter.name)}</td>
     ${paramCells}
     <td class="col-rev"><div class="revision-cell">
-      <button type="button" class="rev-btn" data-action="rev-dec" data-chapter="${cid}" data-subject="${sid}" aria-label="Decrease revisions">−</button>
+      <button type="button" class="rev-btn" data-action="rev-dec" data-chapter="${cid}" data-subject="${sid}" aria-label="Decrease revisions" ${chapter.revisionCount === 0 ? 'disabled' : ''}>−</button>
       <span class="rev-count ${chapter.revisionCount === 0 ? 'zero' : ''}">${chapter.revisionCount}</span>
       <button type="button" class="rev-btn" data-action="rev-inc" data-chapter="${cid}" data-subject="${sid}" aria-label="Increase revisions">+</button>
     </div></td>
@@ -275,6 +346,8 @@ export function refreshRowProgress(chapterId) {
   if (bar) { bar.style.width = pct + '%'; bar.style.background = color; }
   if (label) { label.textContent = pct + '%'; label.style.color = color; }
   if (rev) { rev.textContent = chapter.revisionCount; rev.classList.toggle('zero', chapter.revisionCount === 0); }
+  const revDec = row.querySelector('[data-action="rev-dec"]');
+  if (revDec) revDec.disabled = chapter.revisionCount === 0;
   row.classList.toggle('chapter-revised', isChapterRevised(chapter));
 }
 
@@ -296,4 +369,57 @@ export function refreshSubjectAndOverall() {
     nav.querySelector('.fill').style.width = pct + '%';
   }
   renderDateUI();
+}
+
+
+// ── Chapter search & filter ────────────────────────────
+
+export function applyChapterFilter() {
+  const subject = activeSubject();
+  if (!subject) return;
+
+  const searchInput = $('chapter-search');
+  const clearBtn = $('chapter-search-clear');
+  const query = (searchInput?.value || '').trim().toLowerCase();
+  if (clearBtn) clearBtn.classList.toggle('hidden', !query);
+
+  const filter = document.querySelector('#chapter-filter-pills .filter-pill.active')?.dataset.filter || 'all';
+  const tbody = $('chapters-tbody');
+  const rows = [...tbody.querySelectorAll('tr[data-chapter-id]')];
+  let visible = 0;
+
+  rows.forEach(row => {
+    const chapterId = row.dataset.chapterId;
+    const chapter = subject.chapters.find(c => c.id === chapterId);
+    if (!chapter) { row.classList.add('hidden'); return; }
+
+    const nameMatch = !query || chapter.name.toLowerCase().includes(query);
+
+    let filterMatch = true;
+    if (filter === 'pending') filterMatch = !isChapterComplete(chapter, subject);
+    else if (filter === 'complete') filterMatch = isChapterComplete(chapter, subject);
+    else if (filter === 'revised') filterMatch = isChapterRevised(chapter);
+
+    const show = nameMatch && filterMatch;
+    row.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  let emptyMsg = document.getElementById('chapter-search-empty');
+  if (subject.chapters.length === 0) {
+    if (emptyMsg) emptyMsg.classList.add('hidden');
+    return;
+  }
+
+  if (visible === 0) {
+    if (!emptyMsg) {
+      emptyMsg = document.createElement('div');
+      emptyMsg.id = 'chapter-search-empty';
+      $('chapters-table-wrap').after(emptyMsg);
+    }
+    emptyMsg.textContent = query ? `No chapters match "${query}"` : 'No chapters match the selected filter.';
+    emptyMsg.classList.remove('hidden');
+  } else if (emptyMsg) {
+    emptyMsg.classList.add('hidden');
+  }
 }

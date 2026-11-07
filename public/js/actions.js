@@ -9,8 +9,6 @@ import {
   refreshRowProgress, refreshSubjectAndOverall,
 } from './render.js';
 
-// ── Navigation ─────────────────────────────────────────────
-
 export function selectDashboard() {
   State.activeSubjectId = null;
   renderSidebar();
@@ -19,11 +17,14 @@ export function selectDashboard() {
 
 export function selectSubject(id) {
   State.activeSubjectId = id;
+  const search = $('chapter-search');
+  if (search) search.value = '';
+  document.querySelectorAll('#chapter-filter-pills .filter-pill').forEach((pill, idx) => {
+    pill.classList.toggle('active', idx === 0);
+  });
   renderSidebar();
   if (!renderSubjectView()) selectDashboard();
 }
-
-// ── Brand & dates ──────────────────────────────────────────
 
 export async function handleEditBrand() {
   const result = await showBrandModal({
@@ -48,8 +49,6 @@ export async function handleEditDates() {
     showToast('Study dates saved.');
   } catch (err) { showToast(err.message, 'error'); }
 }
-
-// ── Parameter editor (shared by "Add Subject" and "Manage Parameters") ──
 
 function appendParamRow(container, param = { id: newId(), name: '', label: '' }) {
   const row = document.createElement('div');
@@ -88,7 +87,7 @@ export function attachParamEditor(container) {
       }
       row.remove();
     } else if (move === 'up' && row.previousElementSibling) {
-      container.insertBefore(row, row.previousElementSibling);
+      container.insertBefore(row.previousElementSibling, row.nextElementSibling);
     } else if (move === 'down' && row.nextElementSibling) {
       container.insertBefore(row.nextElementSibling, row);
     }
@@ -111,8 +110,6 @@ function validateParamList(params) {
 
 export function addParamToCreateForm() { appendParamRow($('create-param-rows')); }
 export function addParamToManageForm() { appendParamRow($('manage-param-rows')); }
-
-// ── Subjects ───────────────────────────────────────────────
 
 export function handleAddSubject() {
   $('new-subject-name').value = '';
@@ -227,8 +224,6 @@ export async function handleMoveSubject(subjectId, delta) {
   }
 }
 
-// ── Chapters ───────────────────────────────────────────────
-
 export async function handleAddChapter() {
   const subject = activeSubject();
   if (!subject) return;
@@ -236,6 +231,11 @@ export async function handleAddChapter() {
   if (!name) return;
   try {
     subject.chapters.push(await API.addChapter(subject.id, name));
+    const search = $('chapter-search');
+    if (search) search.value = '';
+    document.querySelectorAll('#chapter-filter-pills .filter-pill').forEach((pill, idx) => {
+      pill.classList.toggle('active', idx === 0);
+    });
     renderSidebar();
     renderSubjectView();
     showToast(`Chapter "${name}" added.`);

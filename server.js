@@ -22,8 +22,6 @@ try {
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static(PUBLIC_DIR));
 
-// ── Helpers ────────────────────────────────────────────────
-
 const fail = (res, status, error) => res.status(status).json({ error });
 const isDateOrEmpty = v => v === '' || (/^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v)));
 
@@ -54,6 +52,14 @@ function createChapter(name, params) {
   return { id: randomUUID(), name, params: values, revisionCount: 0, createdAt: new Date().toISOString() };
 }
 
+function findSubject(subjects, id) {
+  return subjects.find(subject => subject.id === id);
+}
+
+function findChapter(subject, id) {
+  return subject.chapters.find(chapter => chapter.id === id);
+}
+
 /** Reorder `list` in place to follow `ids`. Returns an error message, or null on success. */
 function applyOrder(list, ids) {
   if (!Array.isArray(ids) || ids.length !== list.length) return 'Order list does not match the items.';
@@ -62,8 +68,6 @@ function applyOrder(list, ids) {
   list.splice(0, list.length, ...ids.map(id => byId.get(id)));
   return null;
 }
-
-// ── Config ─────────────────────────────────────────────────
 
 app.get('/config', (_req, res) => res.json(store.read().config));
 app.put('/config', (req, res) => {
@@ -84,13 +88,12 @@ app.put('/config', (req, res) => {
   res.json(data.config);
 });
 
-// ── Subjects ───────────────────────────────────────────────
-
 app.get('/subjects', (_req, res) => res.json(store.read().subjects));
 
 app.post('/subjects', (req, res) => {
   const name = String(req.body.name || '').trim();
   if (!name) return fail(res, 400, 'Subject name is required.');
+  if (name.length > 120) return fail(res, 400, 'Name too long.');
   let params;
   try { params = cleanParams(req.body.params); } catch (err) { return fail(res, 400, err.message); }
   const data = store.read();
@@ -100,7 +103,6 @@ app.post('/subjects', (req, res) => {
   res.status(201).json(subject);
 });
 
-// Must be declared before '/subjects/:id' so "order" isn't read as an id.
 app.put('/subjects/order', (req, res) => {
   const data = store.read();
   const error = applyOrder(data.subjects, req.body.ids);
@@ -111,11 +113,12 @@ app.put('/subjects/order', (req, res) => {
 
 app.put('/subjects/:id', (req, res) => {
   const data = store.read();
-  const subject = data.subjects.find(s => s.id === req.params.id);
+  const subject = findSubject(data.subjects, req.params.id);
   if (!subject) return fail(res, 404, 'Subject not found.');
   if (req.body.name !== undefined) {
     const name = String(req.body.name).trim();
     if (!name) return fail(res, 400, 'Subject name is required.');
+    if (name.length > 120) return fail(res, 400, 'Name too long.');
     subject.name = name;
   }
   if (req.body.params !== undefined) {
@@ -141,19 +144,13 @@ app.delete('/subjects/:id', (req, res) => {
   res.json({ success: true });
 });
 
-// ── Chapters ───────────────────────────────────────────────
-
-app.get('/subjects/:subjectId/chapters', (req, res) => {
-  const subject = store.read().subjects.find(s => s.id === req.params.subjectId);
-  if (!subject) return fail(res, 404, 'Subject not found.');
-  res.json(subject.chapters);
-});
 
 app.post('/subjects/:subjectId/chapters', (req, res) => {
   const name = String(req.body.name || '').trim();
   if (!name) return fail(res, 400, 'Chapter name is required.');
+  if (name.length > 120) return fail(res, 400, 'Name too long.');
   const data = store.read();
-  const subject = data.subjects.find(s => s.id === req.params.subjectId);
+  const subject = findSubject(data.subjects, req.params.subjectId);
   if (!subject) return fail(res, 404, 'Subject not found.');
   const chapter = createChapter(name, subject.params);
   subject.chapters.push(chapter);
@@ -161,10 +158,9 @@ app.post('/subjects/:subjectId/chapters', (req, res) => {
   res.status(201).json(chapter);
 });
 
-// Declared before '/chapters/:chapterId' for the same reason as subjects.
 app.put('/subjects/:subjectId/chapters/order', (req, res) => {
   const data = store.read();
-  const subject = data.subjects.find(s => s.id === req.params.subjectId);
+  const subject = findSubject(data.subjects, req.params.subjectId);
   if (!subject) return fail(res, 404, 'Subject not found.');
   const error = applyOrder(subject.chapters, req.body.ids);
   if (error) return fail(res, 400, error);
@@ -174,13 +170,14 @@ app.put('/subjects/:subjectId/chapters/order', (req, res) => {
 
 app.put('/subjects/:subjectId/chapters/:chapterId', (req, res) => {
   const data = store.read();
-  const subject = data.subjects.find(s => s.id === req.params.subjectId);
+  const subject = findSubject(data.subjects, req.params.subjectId);
   if (!subject) return fail(res, 404, 'Subject not found.');
-  const chapter = subject.chapters.find(c => c.id === req.params.chapterId);
+  const chapter = findChapter(subject, req.params.chapterId);
   if (!chapter) return fail(res, 404, 'Chapter not found.');
   if (req.body.name !== undefined) {
     const name = String(req.body.name).trim();
     if (!name) return fail(res, 400, 'Chapter name is required.');
+    if (name.length > 120) return fail(res, 400, 'Name too long.');
     chapter.name = name;
   }
   if (req.body.revisionCount !== undefined) {
@@ -202,7 +199,7 @@ app.put('/subjects/:subjectId/chapters/:chapterId', (req, res) => {
 
 app.delete('/subjects/:subjectId/chapters/:chapterId', (req, res) => {
   const data = store.read();
-  const subject = data.subjects.find(s => s.id === req.params.subjectId);
+  const subject = findSubject(data.subjects, req.params.subjectId);
   if (!subject) return fail(res, 404, 'Subject not found.');
   const index = subject.chapters.findIndex(c => c.id === req.params.chapterId);
   if (index < 0) return fail(res, 404, 'Chapter not found.');
@@ -211,7 +208,6 @@ app.delete('/subjects/:subjectId/chapters/:chapterId', (req, res) => {
   res.json({ success: true });
 });
 
-// ── Errors (e.g. damaged data file) come back as JSON so the UI can show them ──
 app.use((err, _req, res, _next) => {
   console.error(err.message);
   fail(res, err.status || 500, err.message || 'Server error.');

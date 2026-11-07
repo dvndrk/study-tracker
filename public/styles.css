@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    dvndrk Study Tracker — styles.css
-   Light theme, desktop layout.
+   Light + dark theme, desktop layout.
 ═══════════════════════════════════════════════════════════ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -10,6 +10,7 @@
   --bg-surface:     #ffffff;
   --bg-raised:      #f0f3f9;
   --bg-hover:       #e8edf7;
+  --bg-subtle:      #f0f3f9;
   --border:         #dde2ef;
   --border-light:   #e4e9f5;
 
@@ -45,6 +46,60 @@
 
   --sidebar-w: 280px;
   --font: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Dark theme ──────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --bg-base:        #0f1117;
+  --bg-surface:     #181b23;
+  --bg-raised:      #1e2230;
+  --bg-hover:       #252a3a;
+  --bg-subtle:      #1e2230;
+  --border:         #2a3042;
+  --border-light:   #313752;
+
+  --text-primary:   #e2e5f0;
+  --text-secondary: #9aa0bc;
+  --text-muted:     #636b88;
+
+  --accent:         #5b9aff;
+  --accent-dim:     rgba(91,154,255,0.1);
+  --accent-hover:   #4a87ef;
+
+  --green:          #34d399;
+  --gold:           #fbbf24;
+  --danger:         #f87171;
+  --danger-dim:     rgba(248,113,113,0.1);
+
+  --revised-bg:     rgba(52,211,153,0.08);
+  --revised-hover:  rgba(52,211,153,0.14);
+  --revised-name:   #34d399;
+
+  --ahead-bg:    rgba(52,211,153,0.08);   --ahead-text:   #34d399;
+  --behind-bg:   rgba(251,191,36,0.08);   --behind-text:  #fbbf24;
+  --ontrack-bg:  rgba(91,154,255,0.08);   --ontrack-text: #5b9aff;
+
+  --shadow-sm:  0 1px 4px rgba(0,0,0,0.2);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.4);
+
+  color-scheme: dark;
+}
+
+:root[data-theme="dark"] .overlay {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+:root[data-theme="dark"] .custom-check:checked::after {
+  border-color: #0f1117;
+}
+
+:root[data-theme="dark"] .progress-bar-fill {
+  background: linear-gradient(90deg, #5b9aff, #a78bfa);
+}
+
+:root[data-theme="dark"] .progress-bar-fill.accent {
+  background: linear-gradient(90deg, #34d399, #5b9aff);
 }
 
 html, body {
@@ -242,6 +297,28 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 
 #dashboard-subjects-section { margin-bottom: 28px; }
 #dashboard-subject-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+
+#completed-chapters-section { margin-bottom: 28px; }
+.completed-chapters-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.completed-chapters-heading .dashboard-section-title { margin-bottom: 0; }
+.completed-chapters-summary { font-size: 11px; color: var(--text-muted); }
+.completed-subject-group {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm);
+  margin-bottom: 10px;
+}
+.completed-subject-name {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.completed-chapter-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 12px;
+}
+.completed-chapter-row:last-child { border-bottom: 0; }
+.completed-chapter-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.completed-chapter-revisions { flex-shrink: 0; font-size: 11px; font-weight: 600; }
+.completed-chapter-revisions.revised { color: var(--green); }
+.completed-chapter-revisions.not-revised { color: var(--text-muted); }
 
 .subject-card {
   background: var(--bg-surface); border: 1px solid var(--border);
@@ -456,3 +533,107 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 #toast.show    { opacity: 1; transform: translateY(0); }
 #toast.success { border-left: 3px solid var(--green); }
 #toast.error   { border-left: 3px solid var(--danger); }
+
+/* ── Theme toggle ────────────────────────────────────── */
+#add-subject-area {
+  display: flex; align-items: center; gap: 8px;
+}
+#add-subject-area .btn-full { flex: 1; }
+
+.theme-toggle-btn {
+  width: 34px; height: 34px; flex-shrink: 0; border-radius: var(--radius-md);
+  border: 1px solid var(--border); background: var(--bg-raised); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; line-height: 1; transition: all var(--transition);
+}
+.theme-toggle-btn:hover { background: var(--bg-hover); border-color: var(--accent); }
+
+.theme-icon-dark { display: none; }
+:root[data-theme="dark"] .theme-icon-light { display: none; }
+:root[data-theme="dark"] .theme-icon-dark { display: inline; }
+
+/* ── Chapter search & filter ─────────────────────────── */
+.chapters-toolbar-right {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+
+#chapter-search-wrap {
+  display: flex; align-items: center; gap: 0;
+  background: var(--bg-raised); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 0 8px; transition: border-color var(--transition);
+}
+#chapter-search-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+
+.search-icon { font-size: 12px; flex-shrink: 0; opacity: 0.5; }
+
+#chapter-search {
+  background: transparent; border: none; outline: none; color: var(--text-primary);
+  font: inherit; font-size: 13px; padding: 6px 6px; width: 160px;
+}
+#chapter-search::placeholder { color: var(--text-muted); }
+
+.search-clear {
+  background: none; border: none; cursor: pointer; color: var(--text-muted);
+  font-size: 16px; font-weight: 700; line-height: 1; padding: 2px 2px;
+  border-radius: 3px; transition: color var(--transition);
+}
+.search-clear:hover { color: var(--text-primary); }
+
+#chapter-filter-pills { display: flex; gap: 4px; }
+
+.filter-pill {
+  padding: 4px 10px; border-radius: 99px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted); cursor: pointer;
+  font-size: 11px; font-weight: 600; font-family: var(--font);
+  transition: all var(--transition); white-space: nowrap;
+}
+.filter-pill:hover { background: var(--bg-hover); color: var(--text-primary); }
+.filter-pill.active {
+  background: var(--accent-dim); border-color: rgba(59,126,248,0.25);
+  color: var(--accent); font-weight: 700;
+}
+
+#chapter-search-empty {
+  padding: 28px 20px; text-align: center; font-size: 13px; color: var(--text-muted);
+}
+
+/* ── Sticky table header ─────────────────────────────── */
+#chapters-table-wrap {
+  overflow-x: auto;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#chapters-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-raised);
+  box-shadow: 0 1px 0 var(--border);
+}
+
+/* ── Collapsible completed‑chapters groups ───────────── */
+.completed-group-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin: 0; padding: 11px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+  background: var(--bg-subtle); border-bottom: 1px solid var(--border);
+  user-select: none; transition: background var(--transition);
+}
+.completed-group-header:hover { background: var(--bg-hover); }
+.completed-group-header.collapsed { border-bottom: none; }
+
+.collapse-icon {
+  font-size: 10px; color: var(--text-muted); transition: transform 0.2s ease;
+  flex-shrink: 0; display: inline-block;
+}
+
+.completed-group-body { transition: none; }
+.completed-group-body.collapsed { display: none; }
+.completed-group-header.collapsed .collapse-icon { transform: rotate(-90deg); }
+
+.completed-group-count {
+  font-size: 10px; font-weight: 600; color: var(--text-muted);
+  background: var(--bg-raised); border: 1px solid var(--border);
+  padding: 1px 7px; border-radius: 99px; margin-left: auto;
+}
